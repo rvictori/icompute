@@ -99,7 +99,7 @@ if (isset($_SESSION['id'])) {
               <p><button class="button expanded" v-on:click="logIn">Log In</button></p>
             </form>
 
-            <?php if ($_POST['username']): ?>
+            <?php if (isset($_POST['username'])): ?>
             <div class="callout alert">
               <p>Please enter your correct username and password.</p>
             </div>
