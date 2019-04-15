@@ -1,49 +1,98 @@
 <?php
 // Source: https://www.johnmorrisonline.com/build-php-login-form-using-sessions/
+
 session_start();
 
-require '_resources/php/database.php';
+// Get the information of all users.
+$location = "_resources/txt/users.txt";
+$users = str_getcsv(file_get_contents($location), "\n", ";");
 
-$sql = "SELECT *
-        FROM users";
+for ($i = 0; $i < count($users); $i++) {
+  $users[$i] = explode(';', $users[$i]);
+}
 
-if ($result = $mysqli->query($sql)) {
-  $array = mysqli_fetch_all($result, MYSQLI_ASSOC);
+// Headings
+$id_index = array_search('id', $users[0]);
+$name_index = array_search('name', $users[0]);
+$school_index = array_search('school', $users[0]);
+$is_competitor_index = array_search('isCompetitor', $users[0]);
+$is_grader_index = array_search('isGrader', $users[0]);
+$is_supervisor_index = array_search('isSupervisor', $users[0]);
+$username_index = array_search('username', $users[0]);
+$password_index = array_search('password', $users[0]);
 
-  if (!empty($_POST)) {
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-      $valid_user = array();
+if (!empty($_POST)) {
+  if (isset($_POST['username']) && isset($_POST['password'])) {
+    $valid_user = array();
 
-      for ($i = 0; $i < count($array); $i++) {
-        if ($array[$i]['username'] == $_POST['username'] && $array[$i]['password'] == $_POST['password']) {
-          $valid_user = $array[$i];
-        }
+    for ($i = 1; $i < count($users); $i++) {
+      if ($users[$i][$username_index] == $_POST['username'] && $users[$i]['password'] == $_POST[$password_index]) {
+        $valid_user = $users[$i];
       }
+    }
 
-      if (!empty($valid_user)) {
-        $_SESSION['id'] = $valid_user['id'];
-        $_SESSION['name'] = $valid_user['name'];
-        $_SESSION['school'] = $valid_user['school'];
-        $_SESSION['is_competitor'] = $valid_user['isCompetitor'];
-        $_SESSION['is_grader'] = $valid_user['isGrader'];
-        $_SESSION['is_supervisor'] = $valid_user['isSupervisor'];
-      } else {
-        $invalid = true; // This is for the invalid message.
-      }
+    if (!empty($valid_user)) {
+      $id_index = array_search('id', $users[0]);
+      $_SESSION['id'] = $valid_user[$id_index];
+      $_SESSION['name'] = $valid_user[$name_index];
+      $_SESSION['school'] = $valid_user[$school_index];
+      $_SESSION['is_competitor'] = $valid_user[$is_competitor_index];
+      $_SESSION['is_grader'] = $valid_user[$is_grader_index];
+      $_SESSION['is_supervisor'] = $valid_user[$is_supervisor_index];
+    } else {
+      $invalid = true;
     }
   }
 }
 
-// Redirection.
 if (isset($_SESSION['id'])) {
   if ($_SESSION['is_supervisor'] == "true") {
     header("Location: supervisor.php");
+    echo "Supervisor here...";
   } else if ($_SESSION['is_grader'] == "true") {
     echo "Grader here...";
   } else if ($_SESSION['is_competitor'] == "true") {
     header("Location: section-a.php");
   }
 }
+
+$host = '35.237.181.128';
+$username = 'root';
+$password = 'iComputeProject';
+$db_name = 'Graders';
+
+$mysqli = new mysqli($host, $username, $password, $db_name) or die($mysqli->error);
+
+$sql = "SELECT * FROM Graders";
+
+if ($mysqli->query($sql)) {
+  echo "Database connected.";
+} else {
+  echo "man.";
+}
+
+// $con = mysql_connect($db_host, $db_user, $db_pass);
+// $stmt = $con->prepare("SELECT * FROM Users");
+// $stmt->execute();
+// $result = $stmt->get_result();
+// echo $result;
+
+// if (!empty($_POST)) {
+//   if (isset($_POST['username']) && isset($_POST['password'])) {
+//     // Getting submitted user data from database
+//     $con = new mysqli($db_host, $db_user, $db_pass, $db_name);
+//     $stmt = $con->prepare("SELECT * FROM users WHERE username = ?");
+//     $stmt->bind_param('s', $_POST['username']);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+//     $user = $result->fetch_object();
+//
+//     // Verify user password and set $_SESSION
+//     if (password_verify($_POST['password'], $user->password )) {
+//       $_SESSION['user_id'] = $user->ID;
+//     }
+//   }
+// }
 ?>
 
 <!DOCTYPE html>

@@ -148,7 +148,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           </div>
 
           <!-- Create Button -->
-          <button class="button" title="Create a user." data-open="create-modal"><i class="fas fa-plus fa-lg"></i></button>
+          <button class="button" title="Create a user." data-open="create-modal" v-if="fetchedUsers.length != 0"><i class="fas fa-plus fa-lg"></i></button>
         </div>
       </div>
     </div>
@@ -193,7 +193,6 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
         // New user
         newUser: {
-          id: "",
           name: "",
           school: "",
           isCompetitor: false,
@@ -209,24 +208,10 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
       methods: {
         addUser: function() {
-          // Give a unique ID to the new user.
-          var newId = -1;
+          postData("_resources/php/adding-user.php", this.newUser, "adding");
 
-          for (var i = 0; i < this.fetchedUsers.length; i++) {
-            if (newId < this.fetchedUsers[i].id) {
-              newId = this.fetchedUsers[i].id;
-            }
-          }
-
-          this.newUser.id = parseInt(newId) + 1;
-
-          // Add the new user to the users array.
-          var user = Object.assign({}, this.newUser);
-          this.fetchedUsers.push(user);
-
-          // Reset newUser.
+          // Reset.
           this.newUser = {
-            id: "",
             name: "",
             school: "",
             isCompetitor: false,
@@ -235,11 +220,32 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
             username: "",
             password: ""
           };
+          this.fetchedUsers = [];
+          fetchData("users", this.fetchedUsers);
 
           $("div#create-modal").foundation("close"); // Close the create modal.
         },
 
-        saveUsers: function(index) {
+        deleteUser: function(index) {
+          let self = this;
+
+          // Get the index of the question to be deleted.
+          var id = -1;
+
+          for (var i = 0; i < this.fetchedUsers.length; i++) {
+            if (i == index) {
+              id = this.fetchedUsers[i].id;
+            }
+          }
+
+          console.log(id);
+
+          postData("_resources/php/deleting-user.php", {
+            id: id
+          }, "deleting");
+        },
+
+        saveUser: function(index) {
           let self = this; // "this" is not within the scope of AJAX.
 
           var data = {};
@@ -254,7 +260,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
           $.ajax({
             type: "POST",
-            url: "_resources/php/submit-users.php",
+            url: "_resources/php/saving-user.php",
             data: data,
 
             success: function(data) { // Success.
@@ -290,6 +296,8 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         deleteConfirmation: function() {
           // Delete the user when the confirmation is "delete"
           if (this.deleteConfirmation == "delete") {
+            this.deleteUser(this.deleteIndex);
+
             this.fetchedUsers.splice(this.deleteIndex, 1);
             this.deleteConfirmation = "";
 

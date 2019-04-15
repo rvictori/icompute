@@ -33,7 +33,7 @@ function fetchData(tableName, storage) {
 /* Posting Data */
 
 function postData(filename, data, action) {
-  console.log(action + " data...");
+  console.log(action.charAt(0).toUpperCase() + action.slice(1) + " data...");
 
   $.ajax({
     type: "POST",
@@ -42,6 +42,7 @@ function postData(filename, data, action) {
 
     success: function(data) { // Success.
       console.log("..." + action + " success.");
+      console.log(data);
     },
 
     fail: function() { // Failure.

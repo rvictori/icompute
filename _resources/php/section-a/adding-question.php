@@ -1,7 +1,6 @@
 <?php
 require '../database.php';
 
-$id = $_POST['id'];
 $question = $_POST['question'];
 $correct_answer = $_POST['correctAnswer'];
 $answer1 = $_POST['answer1'];

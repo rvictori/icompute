@@ -70,17 +70,17 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_supervisor'] == "false")) { // Red
           <h3>Section A</h3>
 
           <div class="grid-x grid-padding-x">
-            <div class="cell small-12 medium-2 large-2">
+            <div class="cell small-12 medium-12 large-2">
               <p><a class="button expanded" title="Go to the Editing Section A Questions page." href="edit-section-a-questions.php"><i class="fas fa-question fa-5x"></i></a></p>
             </div>
-            <div class="cell small-12 medium-10 large-10">
+            <div class="cell small-12 medium-12 large-10">
               <h4><a title="Go to the Editing Section A Questions page." href="edit-section-a-questions.php">Editing Questions</a></h4>
               <p>Visit the page for editing all the questions for Section A, the multiple choice exam. This includes creating new questions for future tests and setting which answer is the correct answer.</p>
             </div>
-            <div class="cell small-12 medium-2 medium-2">
+            <div class="cell small-12 medium-12 large-2">
               <p><a class="button expanded" title="Go to the Editing Section A Tests page." href="edit-section-a-tests.php"><i class="fas fa-edit fa-5x"></i></a></p>
             </div>
-            <div class="cell small-12 medium-10 large-10">
+            <div class="cell small-12 medium-12 large-10">
               <h4><a title="Go to the Editing Section A Tests page." href="edit-section-a-tests.php">Editing Tests</a></h4>
               <p>This is the place where you can edit a certain version of the Section A Tests. This also includes determining which competitive team can take which test and which question should be in each test iteration.</p>
             </div>
@@ -89,10 +89,10 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_supervisor'] == "false")) { // Red
           <h3>Users</h3>
 
           <div class="grid-x grid-padding-x">
-            <div class="cell small-12 medium-2 large-2">
+            <div class="cell small-12 medium-12 large-2">
               <p><a class="button alert expanded" title="Go to the Editing Users page." href="edit-users.php"><i class="fas fa-users fa-5x"></i></a></p>
             </div>
-            <div class="cell small-12 medium-10 large-10">
+            <div class="cell small-12 medium-12 large-10">
               <h4><a title="Go to the Editing Users page." href="edit-users.php">Editing Users</a></h4>
               <p>Get a chance to edit a specific team, grader or supervisor with this page. You can change their username, password and even their level of this program from being a regular competitor to being an administrative supervisor.</p>
             </div>
