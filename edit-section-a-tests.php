@@ -51,28 +51,28 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           </div>
 
           <!-- Add Question Modal -->
-          <div class="reveal" id="add-question-modal" data-reveal>
+          <div class="reveal" id="add-test-content-modal" data-reveal>
             <h3>Adding a Question</h3>
             <p>Pick a question you want to add.</p>
 
             <select v-model="addedQuestionId">
-              <option v-for="question in questions" :value="question.id">{{ question.question }}</option>
+              <option v-for="question in fetchedQuestions" :value="question.id">{{ question.question }}</option>
             </select>
 
             <!-- Create Button -->
-            <button class="button" v-on:click="addQuestion">Add</button>
+            <button class="button" v-on:click="addTestContent">Add</button>
 
             <!-- Close Button -->
             <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the add modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
           </div>
 
           <!-- Add Team Modal -->
-          <div class="reveal" id="add-team-modal" data-reveal>
+          <div class="reveal" id="add-test-team-modal" data-reveal>
             <h3>Adding a Team</h3>
             <p>Pick a team you want to add.</p>
 
             <select v-model="addedTeamId">
-              <option v-for="user in users" v-if="user.isCompetitor == 'true'" :value="user.id">{{ user.name }}</option>
+              <option v-for="user in fetchedUsers" v-if="user.isCompetitor == 'true'" :value="user.id">{{ user.name }}</option>
             </select>
 
             <!-- Create Button -->
@@ -99,20 +99,26 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
             <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the create modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
           </div>
 
+          <!-- Save Modal -->
+          <div class="reveal" id="save-modal" data-reveal>
+            <h3>Save {{ saveStatus }}</h3>
+            <p>Your save was a {{ saveStatus }}.</p>
+
+            <!-- Close Button -->
+            <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the save modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
+          </div>
+
           <!-- Heading -->
           <h1>iCompute</h1>
 
           <h2>{{ headingTwo }}</h2>
           <h3>{{ headingThree }}</h3>
 
-          <!-- Save Button -->
-          <button class="button success" title="Save tests." data-open="save-modal" v-if="tests.length != 0" v-on:click="saveTests"><i class="far fa-save fa-lg"></i></button>
-
           <!-- Create Button -->
           <button class="button" title="Create a test." data-open="create-modal"><i class="fas fa-plus fa-lg"></i></button>
 
           <!-- Tests Section -->
-          <div class="card" v-for="(test, index) in tests">
+          <div class="card" v-for="(test, index) in fetchedTests">
             <div class="card-divider">
               <p>{{ test.name }} <span v-if="test.year">({{ test.year }})</span></p>
             </div>
@@ -132,9 +138,9 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                   <h5>Questions</h5>
 
                   <!-- Add Question Button -->
-                  <button class="tiny button" title="Add a question." data-open="add-question-modal" v-on:click="setAdd(test.id)"><i class="fas fa-plus fa-lg"></i></button>
+                  <button class="tiny button" title="Add a question." data-open="add-test-content-modal" v-on:click="setAdd(test.id)"><i class="fas fa-plus fa-lg"></i></button>
 
-                  <div class="callout primary" v-for="(content, contentIndex) in testContent" v-if="test.id == content.testId">
+                  <div class="callout primary" v-for="(content, contentIndex) in fetchedTestContent" v-if="test.id == content.testId">
                     <p>{{ getQuestion(content.questionId) }}</p>
 
                     <!-- Delete Question Button -->
@@ -147,9 +153,9 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                   <h5>Teams</h5>
 
                   <!-- Add Team Button -->
-                  <button class="tiny button" title="Add a team." data-open="add-team-modal" v-on:click="setAdd(test.id)"><i class="fas fa-plus fa-lg"></i></button>
+                  <button class="tiny button" title="Add a team." data-open="add-test-team-modal" v-on:click="setAdd(test.id)"><i class="fas fa-plus fa-lg"></i></button>
 
-                  <div class="callout success" v-for="(team, teamIndex) in testTeams" v-if="test.id == team.testId">
+                  <div class="callout success" v-for="(team, teamIndex) in fetchedTestTeams" v-if="test.id == team.testId">
                     <p>{{ getTeam(team.userId) }}</p>
 
                     <!-- Delete Team Button -->
@@ -157,19 +163,19 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                   </div>
                 </div>
 
-                <!-- Delete Button -->
                 <div class="cell">
+                  <!-- Save Button -->
+                  <button class="button success" title="Save tests." data-open="save-modal" v-on:click="saveTest(index)"><i class="far fa-save fa-lg"></i></button>
+
+                  <!-- Delete Button -->
                   <button class="button alert" title="Delete this test." data-open="delete-modal" v-on:click="setDelete(index, 'test')"><i class="fas fa-trash-alt fa-lg"></i></button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Save Button -->
-          <button class="button success" title="Save tests." data-open="save-modal" v-if="tests.length != 0" v-on:click="saveTests"><i class="far fa-save fa-lg"></i></button>
-
           <!-- Create Button -->
-          <button class="button" title="Create a test." data-open="create-modal"><i class="fas fa-plus fa-lg"></i></button>
+          <button class="button" title="Create a test." data-open="create-modal" v-if="fetchedTests.length != 0"><i class="fas fa-plus fa-lg"></i></button>
         </div>
       </div>
     </div>
@@ -205,19 +211,19 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         headingThree: 'Editing Section A Tests',
 
         // Get all test versions.
-        tests: [],
+        fetchedTests: [],
 
         // Get content for all test versions.
-        testContent: [],
+        fetchedTestContent: [],
 
         // Get all questions.
-        questions: [],
+        fetchedQuestions: [],
 
         // Get all information on which team is taking which test.
-        testTeams: [],
+        fetchedTestTeams: [],
 
         // Get all users
-        users: [],
+        fetchedUsers: [],
 
         // What type of item to delete for output.
         deleteItemType: "",
@@ -241,7 +247,6 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
         // Variables for New Test
         newTest: {
-          id: -1,
           name: "",
           year: ""
         },
@@ -249,76 +254,109 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
       methods: {
         addTeam: function() {
-          var team = {
+          var testTeam = {
             testId: this.addedTestId,
             userId: this.addedTeamId
           };
 
-          this.testTeams.push(team);
+          postData("_resources/php/section-a/adding-test-team.php", testTeam, "adding");
 
-          // Reset the team index.
+          // Reset.
           this.addedTeamId = 1;
+          this.fetchedTestTeams = [];
+          fetchData("section_a_test_teams", this.fetchedTestTeams);
 
-          $("div#add-team-modal").foundation("close"); // Close the add modal.
+          $("div#add-test-team-modal").foundation("close"); // Close the add modal.
         },
 
         addTest: function() {
-          // Give a unique ID to the new test.
-          var newId = -1;
+          postData("_resources/php/section-a/adding-test.php", this.newTest, "adding");
 
-          for (var i = 0; i < this.tests.length; i++) {
-            if (newId < this.tests[i].id) {
-              newId = this.tests[i].id;
-            }
-          }
-
-          this.newTest.id = parseInt(newId) + 1;
-
-          // Add the new test to the tests array.
-          var test = Object.assign({}, this.newTest);
-          this.tests.push(test);
-
-          // Reset newTest.
+          // Reset.
           this.newTest = {
-            id: -1,
             name: "",
             year: ""
           };
+          this.fetchedTests = [];
+          fetchData("section_a_tests", this.fetchedTests);
 
           $("div#create-modal").foundation("close"); // Close the create modal.
         },
 
-        addQuestion: function() {
-          var question = {
+        addTestContent: function() {
+          var testContent = {
             testId: this.addedTestId,
             order: -1,
             questionId: this.addedQuestionId
           };
 
           // Get the next order number for this test.
-
-          for (var i = 0; i < this.testContent.length; i++) {
-            if (this.testContent[i].testId == this.addedTestId && question.order < this.testContent[i].order) {
-              question.order = this.testContent[i].order;
+          for (var i = 0; i < this.fetchedTestContent.length; i++) {
+            if (this.fetchedTestContent[i].testId == this.addedTestId && testContent.order < this.fetchedTestContent[i].order) {
+              testContent.order = this.fetchedTestContent[i].order;
             }
           }
 
-          ++question.order;
+          ++testContent.order;
 
-          this.testContent.push(question);
+          postData("_resources/php/section-a/adding-test-content.php", testContent, "adding");
 
-          // Reset the question index.
+
+          // Reset.
           this.addedQuestionId = 1;
+          this.fetchedTestContent = [];
+          fetchData("section_a_test_content", this.fetchedTestContent);
 
-          $("div#add-question-modal").foundation("close"); // Close the add modal.
+          $("div#add-test-content-modal").foundation("close"); // Close the add modal.
+        },
+
+        deleteTest: function(index) {
+          // Get the ID of the test to be deleted.
+          var id = -1;
+
+          for (var i = 0; i < this.fetchedTests.length; i++) {
+            if (i == index) {
+              id = this.fetchedTests[i].id;
+            }
+          }
+
+          postData("_resources/php/section-a/deleting-test.php", {
+            id: id
+          }, "deleting");
+        },
+
+        deleteTestContent: function(index) {
+          // Get the test content to be deleted.
+          var data = {};
+
+          for (var i = 0; i < this.fetchedTestContent.length; i++) {
+            if (i == index) {
+              data = this.fetchedTestContent[i];
+            }
+          }
+
+          postData("_resources/php/section-a/deleting-test-content.php", data, "deleting");
+        },
+
+        deleteTestTeam: function(index) {
+          // Get the test team to be deleted.
+          var data = {};
+
+          for (var i = 0; i < this.fetchedTestTeams.length; i++) {
+            if (i == index) {
+              data = this.fetchedTestTeams[i];
+            }
+          }
+
+          postData("_resources/php/section-a/deleting-test-team.php", data, "deleting");
         },
 
         getQuestion: function(questionId) {
           var question = "";
 
-          for (var i = 0; i < this.questions.length; i++) {
-            if (this.questions[i].id == questionId) {
-              question = this.questions[i].question;
+          for (var i = 0; i < this.fetchedQuestions.length; i++) {
+            if (this.fetchedQuestions[i].id == questionId) {
+              question = this.fetchedQuestions[i].question;
             }
           }
 
@@ -328,33 +366,37 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         getTeam: function(userId) {
           var teamName = "";
 
-          for (var i = 0; i < this.users.length; i++) {
-            if (this.users[i].id == userId) {
-              teamName = this.users[i].name;
+          for (var i = 0; i < this.fetchedUsers.length; i++) {
+            if (this.fetchedUsers[i].id == userId) {
+              teamName = this.fetchedUsers[i].name;
             }
           }
 
           return teamName;
         },
 
-        saveTests: function() {
+        saveTest: function(index) {
           let self = this; // "this" is not within the scope of AJAX.
 
-          var filePath = '_resources/php/submit-section-a-tests.php';
+          var data = {};
+
+          for (var i = 0; i < this.fetchedTests.length; i++) {
+            if (i == index) {
+              data = this.fetchedTests[i];
+            }
+          }
+
+          console.log("Submitting data...");
 
           $.ajax({
             type: "POST",
-            url: filePath,
-            data: {
-              "testsData": convertToCsv(self.tests),
-              "testQuestionsData": convertToCsv(self.testContent),
-              "testTeamsData": convertToCsv(self.testTeams)
-            },
+            url: "_resources/php/section-a/saving-test.php",
+            data: data,
 
-            success: function() { // Success.
+            success: function(data) { // Success.
               console.log("...submission success.");
 
-              self.saveStatus = "success";
+              self.saveStatus = data;
             },
 
             fail: function() { // Failure.
@@ -383,19 +425,19 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         console.log("App mounted.");
 
         // Fetch all the test versions.
-        fetchData('_resources/txt/section-a-tests.txt', this.tests);
+        fetchData("section_a_tests", this.fetchedTests);
 
         // Fetch the content for all test versions.
-        fetchData('_resources/txt/section-a-test-content.txt', this.testContent);
+        fetchData("section_a_test_content", this.fetchedTestContent);
 
         // Fetch all questions.
-        fetchData('_resources/txt/section-a-questions.txt', this.questions);
+        fetchData("section_a_questions", this.fetchedQuestions);
 
         // Fetch the information on which team is taking which test.
-        fetchData('_resources/txt/section-a-test-teams.txt', this.testTeams);
+        fetchData("section_a_test_teams", this.fetchedTestTeams);
 
         // Fetch all users.
-        fetchData('_resources/txt/users.txt', this.users);
+        fetchData("users", this.fetchedUsers);
       },
 
       watch: {
@@ -404,44 +446,38 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           if (this.deleteConfirmation == "delete") {
             switch (this.deleteItemType) {
               case "question":
-                this.testContent.splice(this.deleteIndex, 1);
+                this.deleteTestContent(this.deleteIndex);
+
+                this.fetchedTestContent.splice(this.deleteIndex, 1);
                 break;
 
               case "team":
-                this.testTeams.splice(this.deleteIndex, 1);
+                this.deleteTestTeam(this.deleteIndex);
+
+                this.fetchedTestTeams.splice(this.deleteIndex, 1);
                 break;
 
               case "test":
-                var deletedTest = this.tests[this.deleteIndex];
+                var deletedTest = this.fetchedTests[this.deleteIndex];
 
                 // Delete the test content that was in this test.
-                var indexToDelete = [];
-
-                for (var i = 0; i < this.testContent.length; i++) {
-                  if (this.testContent[i].testId == deletedTest.id) {
-                    indexToDelete.push(i);
+                for (var i = 0; i < this.fetchedTestContent.length; i++) {
+                  if (this.fetchedTestContent[i].testId == deletedTest.id) {
+                    this.deleteTestContent(i);
                   }
                 }
 
-                for (var i = indexToDelete.length - 1; i >= 0; i--) {
-                  this.testContent.splice(indexToDelete[i], 1);
-                }
-
-                // Delete the users that were in this test.
-                indexToDelete = [];
-
-                for (var i = 0; i < this.testTeams.length; i++) {
-                  if (this.testTeams[i].testId == deletedTest.id) {
-                    indexToDelete.push(i);
+                // Delete the test teams that were in this test.
+                for (var i = 0; i < this.fetchedTestTeams.length; i++) {
+                  if (this.fetchedTestTeams[i].testId == deletedTest.id) {
+                    this.deleteTestTeam(i);
                   }
-                }
-
-                for (var i = indexToDelete.length - 1; i >= 0; i--) {
-                  this.testTeams.splice(indexToDelete[i], 1);
                 }
 
                 // Delete the entire test, finally.
-                this.tests.splice(this.deleteIndex, 1);
+                this.deleteTest(this.deleteIndex);
+
+                this.fetchedTests.splice(this.deleteIndex, 1);
             }
 
             this.deleteConfirmation = "";

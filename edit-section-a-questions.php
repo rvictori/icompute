@@ -216,9 +216,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         },
 
         deleteQuestion: function(index) {
-          let self = this;
-
-          // Get the index of the question to be deleted.
+          // Get the ID of the question to be deleted.
           var id = -1;
 
           for (var i = 0; i < this.fetchedQuestions.length; i++) {
@@ -247,7 +245,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
           $.ajax({
             type: "POST",
-            url: "_resources/php/section-a/submitting-question.php",
+            url: "_resources/php/section-a/saving-question.php",
             data: data,
 
             success: function(data) { // Success.
