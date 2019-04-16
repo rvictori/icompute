@@ -183,17 +183,17 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
       mounted: function() {
         console.log("App mounted.");
 
-        fetchData('_resources/txt/section-a-individual-answers.txt', this.fetchedIndividualAnswers);
+        fetchData("section_a_individual_answers", this.fetchedIndividualAnswers);
 
-        fetchData('_resources/txt/section-a-tests.txt', this.fetchedTests);
+        fetchData("section_a_tests", this.fetchedTests);
 
-        fetchData('_resources/txt/section-a-test-teams.txt', this.fetchedTestTeams);
+        fetchData("section_a_test_teams", this.fetchedTestTeams);
 
-        fetchData('_resources/txt/section-a-questions.txt', this.fetchedQuestions);
+        fetchData("section_a_questions", this.fetchedQuestions);
 
-        fetchData('_resources/txt/section-a-results.txt', this.fetchedResults);
+        fetchData("section_a_results", this.fetchedResults);
 
-        fetchData('_resources/txt/users.txt', this.fetchedUsers);
+        fetchData("section_a_users", this.fetchedUsers);
       },
 
       watch: {
