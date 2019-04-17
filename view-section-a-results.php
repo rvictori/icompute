@@ -43,14 +43,14 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
           <!-- Heading -->
           <h1>iCompute</h1>
           <h2>{{ headingTwo }}</h2>
-          <h3>{{ headingThree }}</h3>
-
 
           <div v-if="isLoading">
             <img src="_resources/images/loading-icon.gif" alt="Loading..." />
           </div>
           <div v-else>
             <img src="_resources/images/sunset.jpg" alt="Sunset Banner" />
+
+            <h3>{{ headingThree }}</h3>
 
             <hr />
 

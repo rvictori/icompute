@@ -39,7 +39,7 @@ if (isset($_SESSION['id'])) {
   if ($_SESSION['is_supervisor'] == "true") {
     header("Location: supervisor.php");
   } else if ($_SESSION['is_grader'] == "true") {
-    echo "Grader here...";
+    header("Location: grader.php");
   } else if ($_SESSION['is_competitor'] == "true") {
     header("Location: section-a.php");
   }
@@ -83,7 +83,12 @@ if (isset($_SESSION['id'])) {
           <!-- Heading -->
           <h1>iCompute</h1>
 
+          <img src="_resources/images/phone-with-laptop-banner.jpg" alt="iCompute Home Banner" />
+
           <h2>{{ headingTwo }}</h2>
+
+          <hr />
+
           <div class="callout">
             <p>Log in with the account provided by the supervisor.</p>
 

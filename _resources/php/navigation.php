@@ -16,9 +16,9 @@
           <a title="Go to the Supervisor page." href="supervisor.php">Admin</a>
           <ul class="menu vertical">
             <li><strong>Section A</strong>
-            <li><a title="Go to the View Section A Results page." href="view-section-a-results.php">View Section A Results</a></li>
-            <li><a title="Go to the Edit Section A Questions page." href="edit-section-a-questions.php">Edit Section A Questions</a></li>
-            <li><a title="Go to the Edit Section A Tests page." href="edit-section-a-tests.php">Edit Section A Tests</a></li>
+            <li><a title="Go to the View Section A Results page." href="view-section-a-results.php">View Results</a></li>
+            <li><a title="Go to the Edit Section A Questions page." href="edit-section-a-questions.php">Edit Questions</a></li>
+            <li><a title="Go to the Edit Section A Tests page." href="edit-section-a-tests.php">Edit Tests</a></li>
 
             <li><strong>Other</strong></li>
             <li><a title="Go to the Edit Users page." href="edit-users.php">Edit Users</a></li>
@@ -28,12 +28,7 @@
 
         <!-- Grader -->
         <?php if (isset($_SESSION['is_grader']) && $_SESSION['is_grader'] == "true"): ?>
-        <li>
-          <a href="#">Grading</a>
-          <ul class="menu vertical">
-            <li><a title="" href="#">One</a></li>
-          </ul>
-        </li>
+        <li><a href="grader.php">Grading</a></li>
         <?php endif; ?>
 
         <!-- Competitor -->

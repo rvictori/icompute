@@ -44,6 +44,8 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_supervisor'] == "false")) { // Red
 
           <img class="orbit-image" src="_resources/images/supervisor-banner.jpg" alt="Supervisor Department" />
 
+          <h2>Supervisor Department</h2>
+
           <hr />
 
           <h3>Section A</h3>
