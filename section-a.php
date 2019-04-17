@@ -56,7 +56,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
             <p>Click the submit button to go on to the next section.</p>
 
             <!-- Submit Button -->
-            <button class="button success" v-on:click="submitQuestions">Submit</button>
+            <button class="button success" v-on:click="addingResult">Submit</button>
 
             <!-- Close Button -->
             <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the submit modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
@@ -68,48 +68,74 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
           <h2>{{ headingTwo }}</h2>
           <h3>{{ headingThree }}</h3>
 
-          <div v-if="hasTaken">
-            <p>You have taken this part of the test already and may not take it again. Please move on to the next part of the exam.</p>
-
-            <a class="button expanded" title="Go to the Section B page." href="#">Section B</a>
+          <div v-if="isLoading">
+            <img src="_resources/images/loading-icon.gif" alt="Loading..." />
           </div>
           <div v-else>
-            <!-- Start Button -->
-            <button class="button expanded" v-if="!testStarted" v-on:click="obtainTeamQuestions">Start Exam</button>
-
-            <!-- Questions Section in Cards -->
-            <div v-if="testStarted">
-              <!-- Progress Bar -->
-              <div class="primary progress" role="progressbar" tabindex="0" :aria-valuenow="progress" aria-valuemin="0" :aria-valuetext="progress + ' percent'" aria-valuemax="100">
-                <div class="progress-meter" :style="'width: ' + progress + '%'">
-                  <p class="progress-meter-text" v-if="progress != 0">{{ progress }}%</p>
-                </div>
+            <div v-if="hasTaken">
+              <div>
+                <img src="_resources/images/book-with-laptop-banner.jpg" alt="Book with laptop banner" />
               </div>
 
-              <div class="card" v-for="(currentQuestion, index) in teamQuestions">
-                <div class="card-divider">
-                  <h4></h4>
-                  <p><strong>Question {{ index + 1 }}:</strong> {{ currentQuestion.question }}</p>
-                </div>
-
-                <div class="card-section">
-                  <input type="radio" :name="'question-' + index" :value="currentQuestion.answer1" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer1 }}<br />
-
-                  <input type="radio" :name="'question-' + index" :value="currentQuestion.answer2" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer2 }}<br />
-
-                  <input type="radio" :name="'question-' + index" :value="currentQuestion.answer3" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer3 }}<br />
-
-                  <input type="radio" :name="'question-' + index" :value="currentQuestion.answer4" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer4 }}<br />
-                </div>
+              <div class="callout primary">
+                <p>You have taken this part of the test already and may not take it again. Please move on to the next part of the exam.</p>
               </div>
 
-              <!-- Submit Button -->
-              <button class="button success" data-open="submit-modal">Submit</button>
+              <a class="button expanded" title="Go to the Section B page." href="#">Section B</a>
+            </div>
+            <div v-else>
+              <img src="_resources/images/book-with-laptop-banner.jpg" alt="Book with laptop banner" v-if="!testStarted" />
 
-              <!-- Progress Bar -->
-              <div class="primary progress" role="progressbar" tabindex="0" :aria-valuenow="progress" aria-valuemin="0" :aria-valuetext="progress + ' percent'" aria-valuemax="100">
-                <div class="progress-meter" :style="'width: ' + progress + '%'">
-                  <p class="progress-meter-text" v-if="progress != 0">{{ progress }}%</p>
+              <hr v-if="!testStarted" />
+
+              <!-- Start Button -->
+              <button class="button large expanded" v-if="!testStarted" v-on:click="obtainTeamQuestions">Start Exam</button>
+
+              <!-- Questions Section in Cards -->
+              <div v-if="testStarted">
+                <div v-if="teamQuestions.length != 0">
+                  <!-- Progress Bar -->
+                  <div class="primary progress" role="progressbar" tabindex="0" :aria-valuenow="progress" aria-valuemin="0" :aria-valuetext="progress + ' percent'" aria-valuemax="100">
+                    <div class="progress-meter" :style="'width: ' + progress + '%'">
+                      <p class="progress-meter-text" v-if="progress != 0">{{ progress }}%</p>
+                    </div>
+                  </div>
+
+                  <div class="card" v-for="(currentQuestion, index) in teamQuestions">
+                    <div class="card-divider">
+                      <p><strong>Question {{ index + 1 }}:</strong> {{ currentQuestion.question }}</p>
+                    </div>
+
+                    <div class="card-section">
+                      <input type="radio" :name="'question-' + index" :value="currentQuestion.answer1" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer1 }}<br />
+
+                      <input type="radio" :name="'question-' + index" :value="currentQuestion.answer2" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer2 }}<br />
+
+                      <input type="radio" :name="'question-' + index" :value="currentQuestion.answer3" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer3 }}<br />
+
+                      <input type="radio" :name="'question-' + index" :value="currentQuestion.answer4" v-on:click="updateProgress" v-model="teamAnswers[index]" /> {{ currentQuestion.answer4 }}<br />
+                    </div>
+                  </div>
+
+                  <!-- Submit Button -->
+                  <button class="button success" data-open="submit-modal">Submit</button>
+
+                  <!-- Progress Bar -->
+                  <div class="primary progress" role="progressbar" tabindex="0" :aria-valuenow="progress" aria-valuemin="0" :aria-valuetext="progress + ' percent'" aria-valuemax="100">
+                    <div class="progress-meter" :style="'width: ' + progress + '%'">
+                      <p class="progress-meter-text" v-if="progress != 0">{{ progress }}%</p>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <img class="orbit-image" src="/_resources/images/book-with-laptop-banner.jpg" alt="Contact Supervisor" />
+
+                  <hr />
+
+                  <div class="callout alert">
+                    <h4>Contact Supervisor</h4>
+                    <p>It appears there is no assigned test for your team. <strong>Please contact the supervisor to resolve this problem.</strong>
+                  </div>
                 </div>
               </div>
             </div>
@@ -170,7 +196,9 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
 
         fetchedResults: [],
 
-        hasTaken: false
+        hasTaken: false,
+
+        isLoading: true
       },
 
       methods: {
@@ -234,9 +262,9 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
           }
         },
 
-        submitQuestions: function() {
+        addingResult: function() {
           // Grade the multiple-choice questions automatically.
-          var grade = 0;
+          var result = 0;
 
           for (var i = 0; i < this.teamQuestions.length; i++) {
             var currentQuestion = {};
@@ -247,12 +275,72 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
               }
             }
 
-            if (currentQuestion.correctAnswer == this.teamAnswers[i]) {
-              ++grade;
+            // Add the individual answers to the database while incrementing the result variable if it is right.
+            var answerNo = -1;
+
+            if (this.teamAnswers[i] == currentQuestion.correctAnswer) {
+              answerNo = 0;
+
+              ++result;
+            } else if (this.teamAnswers[i] == currentQuestion.answer1) {
+              answerNo = 1;
+            } else if (this.teamAnswers[i] == currentQuestion.answer2) {
+              answerNo = 2;
+            } else if (this.teamAnswers[i] == currentQuestion.answer3) {
+              answerNo = 3;
             }
+
+            var data = {
+              userId: <?php echo $_SESSION['id']; ?>,
+              questionId: currentQuestion.id,
+              answerNo: answerNo
+            };
+
+            console.log("Submitting data...");
+
+            $.ajax({
+              type: "POST",
+              url: "_resources/php/section-a/adding-individual-answer.php",
+              data: data,
+
+              success: function(data) { // Success.
+                console.log("...submission success.");
+              },
+
+              fail: function() { // Failure.
+                console.log("...submission failure.");
+              },
+
+              always: function() { // ALways.
+
+              }
+            });
           }
 
-          console.log(grade);
+          var data = {
+            userId: <?php echo $_SESSION['id']; ?>,
+            result: result
+          };
+
+          console.log("Submitting data...");
+
+          $.ajax({
+            type: "POST",
+            url: "_resources/php/section-a/adding-result.php",
+            data: data,
+
+            success: function(data) { // Success.
+              console.log("...submission success.");
+            },
+
+            fail: function() { // Failure.
+              console.log("...submission failure.");
+            },
+
+            always: function() { // ALways.
+
+            }
+          });
         },
 
         updateProgress: function() {
@@ -267,16 +355,21 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
         console.log("App mounted.");
 
         // Get all the questions.
-        fetchData('_resources/txt/section-a-questions.txt', this.fetchedQuestions);
+        fetchData("section_a_questions", this.fetchedQuestions);
 
         // Get the information to determine which questions are for the team.
-        fetchData('_resources/txt/section-a-test-content.txt', this.fetchedTestContent);
+        fetchData("section_a_test_content", this.fetchedTestContent);
 
         // Get the information to determine which teams take which test.
-        fetchData('_resources/txt/section-a-test-teams.txt', this.fetchedTestTeams);
+        fetchData("section_a_test_teams", this.fetchedTestTeams);
 
         // Get the results of all teams.
-        fetchData('_resources/txt/section-a-results.txt', this.fetchedResults);
+        fetchData("section_a_results", this.fetchedResults);
+
+        let self = this; // "this" is not within the scope of setTimeout().
+        setTimeout(function() {
+          self.isLoading = false;
+        }, 2000);
       },
 
       watch: {

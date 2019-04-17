@@ -45,30 +45,44 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
           <h2>{{ headingTwo }}</h2>
           <h3>{{ headingThree }}</h3>
 
-          <div v-for="test in fetchedTests">
-            <h4>{{ test.name }} ({{ test.year }})</h4>
-            <p><a class="button small" title="Download the results in CSV for this test." :href="getCsvFile(test.id)" download="results.csv">Download CSV</a></p>
 
-            <div class="callout">
-              <div v-for="team in fetchedTestTeams" v-if="team.testId == test.id">
-                <div v-if="!getFetchedResultInfo(team.userId, 'result')">
-                  <h5>{{ getFetchedUserInfo(team.userId, 'name') }}</h5>
+          <div v-if="isLoading">
+            <img src="_resources/images/loading-icon.gif" alt="Loading..." />
+          </div>
+          <div v-else>
+            <img src="_resources/images/sunset.jpg" alt="Sunset Banner" />
 
-                  <div class="callout primary">
-                    <p>This team has not taken this test yet.</p>
-                  </div>
-                </div>
-                <div v-else>
-                  <h5>{{ getFetchedUserInfo(team.userId, 'name') }} | Score: {{ getFetchedResultInfo(team.userId, 'result') }}</h5>
+            <hr />
 
-                  <div v-for="individualAnswer in fetchedIndividualAnswers" v-if="individualAnswer.userId == team.userId">
-                    <p>{{ getFetchedQuestionInfo(individualAnswer.questionId, 'question') }}</p>
+            <div v-for="test in fetchedTests">
+              <h4>{{ test.name }} ({{ test.year }})</h4>
+              <p><a class="button small" title="Download the results in CSV for this test." :href="getCsvFile(test.id)" download="results.csv">Download CSV</a></p>
 
-                    <div class="callout success" v-if="individualAnswer.answer == getFetchedQuestionInfo(individualAnswer.questionId, 'correctAnswer')">
-                      <p><strong>Selected Correct Answer</strong>: {{ individualAnswer.answer }}</p>
+              <div class="callout">
+                <div v-for="team in fetchedTestTeams" v-if="team.testId == test.id">
+                  <div v-if="!getElement(fetchedResults, 'userId', team.userId, 'result')">
+                    <h5>{{ getElement(fetchedUsers, 'id', team.userId, 'name') }}</h5>
+
+                    <div class="callout primary">
+                      <p>This team has not taken this test yet.</p>
                     </div>
-                    <div class="callout alert" v-else>
-                      <p><strong>Selected Wrong Answer</strong>: {{ individualAnswer.answer }}</p>
+                  </div>
+                  <div v-else>
+                    <h5>{{ getElement(fetchedUsers, 'id', team.userId, 'name') }} | Score: {{ getElement(fetchedResults, 'userId', team.userId, 'result') }}</h5>
+
+                    <div v-for="individualAnswer in fetchedIndividualAnswers" v-if="individualAnswer.userId == team.userId">
+                      <p>{{ getElement(fetchedQuestions, 'id', individualAnswer.questionId, 'question') }}</p>
+
+                      <div class="callout success" v-if="getAnswer(fetchedQuestions, 'id', individualAnswer.questionId, individualAnswer.answerNo) == getElement(fetchedQuestions, 'id', individualAnswer.questionId, 'correctAnswer')">
+                        <p><strong>Selected Correct Answer</strong>: {{ getAnswer(fetchedQuestions, 'id', individualAnswer.questionId, individualAnswer.answerNo) }}</p>
+                      </div>
+                      <div v-else>
+                        <div class="callout warning" v-if="individualAnswer.answerNo == -1">
+                          <p>No answer was selected.</p>
+                        </div>
+                        <div class="callout alert" v-else>
+                        <p><strong>Selected Wrong Answer</strong>: {{ getAnswer(fetchedQuestions, 'id', individualAnswer.questionId, individualAnswer.answerNo) }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -119,10 +133,24 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
 
         fetchedResults: [],
 
-        fetchedUsers: []
+        fetchedUsers: [],
+
+        isLoading: true
       },
 
       methods: {
+        getAnswer: function(array, arrayVar, checkVar, key) {
+          var answerKey;
+
+          if (key == 0) {
+            answerKey = "correctAnswer";
+          } else {
+            answerKey = "answer" + key;
+          }
+
+          return this.getElement(array, arrayVar, checkVar, answerKey);
+        },
+
         getCsvFile: function(testId) {
           var content = "name,school,result\n";
 
@@ -141,8 +169,10 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
               var user = {};
 
               for (var j = 0; j < this.fetchedUsers.length; j++) {
-                if (this.fetchedUsers[i].id == currentUserId) {
-                  user = this.fetchedUsers[i];
+                if (this.fetchedUsers[j].id == currentUserId) {
+                  user = this.fetchedUsers[j];
+
+
                 }
               }
 
@@ -155,29 +185,17 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
           return encodeURI("data:text/csv;charset=utf-8," + content);
         },
 
-        getFetchedQuestionInfo: function(questionId, key) {
-          for (var i = 0; i < this.fetchedQuestions.length; i++) {
-            if (this.fetchedQuestions[i].id == questionId) {
-              return this.fetchedQuestions[i][key];
-            }
-          }
-        },
+        getElement: function(array, arrayVar, checkVar, key) {
+          var element;
 
-        getFetchedResultInfo: function(userId, key) {
-          for (var i = 0; i < this.fetchedResults.length; i++) {
-            if (this.fetchedResults[i].userId == userId) {
-              return this.fetchedResults[i][key];
+          for (var i = 0; i < array.length; i++) {
+            if (array[i][arrayVar] == checkVar) {
+              element = array[i][key];
             }
           }
-        },
 
-        getFetchedUserInfo: function(userId, key) {
-          for (var i = 0; i < this.fetchedUsers.length; i++) {
-            if (this.fetchedUsers[i].id == userId) {
-              return this.fetchedUsers[i][key];
-            }
-          }
-        }
+          return element;
+        },
       },
 
       mounted: function() {
@@ -193,7 +211,12 @@ if (!(isset($_SESSION['id'])) || $_SESSION['is_supervisor'] == "false") { // Red
 
         fetchData("section_a_results", this.fetchedResults);
 
-        fetchData("section_a_users", this.fetchedUsers);
+        fetchData("users", this.fetchedUsers);
+
+        let self = this; // "this" is not within the scope of setTimeout().
+        setTimeout(function() {
+          self.isLoading = false;
+        }, 2000);
       },
 
       watch: {

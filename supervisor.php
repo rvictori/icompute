@@ -39,37 +39,24 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_supervisor'] == "false")) { // Red
 
     <div class="grid-container">
       <div class="grid-x grid-padding-x">
-        <h1>iCompute</h1>
-      </div>
-    </div>
-
-    <div class="callout secondary">
-      <div class="grid-container">
-        <div class="grid-x grid-padding-x">
-          <div class="cell">
-            <div class="orbit" role="region" aria-label="Supervisor Homepage Banner Picture" data-orbit>
-              <div class="orbit-wrapper">
-                <ul class="orbit-container">
-                  <li class="is-active orbit-slide">
-                    <figure class="orbit-figure">
-                      <img class="orbit-image" src="https://images.pexels.com/photos/2058128/pexels-photo-2058128.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="Space">
-                      <figcaption class="orbit-caption"><h2>Supervisor Department</h2></figcaption>
-                    </figure>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid-container">
-      <div class="grid-x grid-padding-x">
         <div id="app" class="cell">
+          <h1>iCompute</h1>
+
+          <img class="orbit-image" src="_resources/images/supervisor-banner.jpg" alt="Supervisor Department" />
+
+          <hr />
+
           <h3>Section A</h3>
 
           <div class="grid-x grid-padding-x">
+            <div class="cell small-12 medium-12 large-2">
+              <p><a class="button expanded" title="Go to the View Section A Results page." href="view-section-a-results.php"><i class="fas fa-eye fa-5x"></i></a></p>
+            </div>
+            <div class="cell small-12 medium-12 large-10">
+              <h4><a title="Go to the View Section A Results page." href="view-section-a-results.php">View Results</a></h4>
+              <p>View all the results from all Section A Tests through this page, which includes the scores of each team as well as their individual answers.</p>
+            </div>
+
             <div class="cell small-12 medium-12 large-2">
               <p><a class="button expanded" title="Go to the Editing Section A Questions page." href="edit-section-a-questions.php"><i class="fas fa-question fa-5x"></i></a></p>
             </div>
@@ -77,6 +64,7 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_supervisor'] == "false")) { // Red
               <h4><a title="Go to the Editing Section A Questions page." href="edit-section-a-questions.php">Editing Questions</a></h4>
               <p>Visit the page for editing all the questions for Section A, the multiple choice exam. This includes creating new questions for future tests and setting which answer is the correct answer.</p>
             </div>
+
             <div class="cell small-12 medium-12 large-2">
               <p><a class="button expanded" title="Go to the Editing Section A Tests page." href="edit-section-a-tests.php"><i class="fas fa-edit fa-5x"></i></a></p>
             </div>

@@ -1,55 +1,57 @@
-<div class="top-bar" id="main-navigation" data-animate="hinge-in-from-top spin-out">
-  <div class="top-bar-left">
-    <ul class="dropdown menu" data-dropdown-menu>
-      <?php if (isset($_SESSION['is_competitor']) && isset($_SESSION['is_grader']) && isset($_SESSION['is_supervisor']) && $_SESSION['is_competitor'] == "true" && $_SESSION['is_grader'] == "false" && $_SESSION['is_supervisor'] == "false"): ?>
-      <li class="menu-text">Team: <?= $_SESSION['name'] ?></li>
-      <?php elseif (isset($_SESSION['name'])): ?>
-      <li class="menu-text">User: <?= $_SESSION['name'] ?></li>
-      <?php else: ?>
-      <li class="menu-text">iCompute</li>
-      <?php endif; ?>
+<div data-sticky-container>
+  <div class="top-bar sticky" id="main-navigation" data-animate="hinge-in-from-top spin-out" data-sticky data-margin-top="0">
+    <div class="top-bar-left">
+      <ul class="dropdown menu" data-dropdown-menu>
+        <?php if (isset($_SESSION['is_competitor']) && isset($_SESSION['is_grader']) && isset($_SESSION['is_supervisor']) && $_SESSION['is_competitor'] == "true" && $_SESSION['is_grader'] == "false" && $_SESSION['is_supervisor'] == "false"): ?>
+        <li class="menu-text">Team: <?= $_SESSION['name'] ?></li>
+        <?php elseif (isset($_SESSION['name'])): ?>
+        <li class="menu-text">User: <?= $_SESSION['name'] ?></li>
+        <?php else: ?>
+        <li class="menu-text">iCompute</li>
+        <?php endif; ?>
 
-      <!-- Supervisor -->
-      <?php if (isset($_SESSION['is_supervisor']) && $_SESSION['is_supervisor'] == "true"): ?>
-      <li>
-        <a title="Go to the Supervisor page." href="supervisor.php">Admin</a>
-        <ul class="menu vertical">
-          <li><strong>Section A</strong>
-          <li><a title="Go to the View Section A Results page." href="view-section-a-results.php">View Section A Results</a></li>
-          <li><a title="Go to the Edit Section A Questions page." href="edit-section-a-questions.php">Edit Section A Questions</a></li>
-          <li><a title="Go to the Edit Section A Tests page." href="edit-section-a-tests.php">Edit Section A Tests</a></li>
+        <!-- Supervisor -->
+        <?php if (isset($_SESSION['is_supervisor']) && $_SESSION['is_supervisor'] == "true"): ?>
+        <li>
+          <a title="Go to the Supervisor page." href="supervisor.php">Admin</a>
+          <ul class="menu vertical">
+            <li><strong>Section A</strong>
+            <li><a title="Go to the View Section A Results page." href="view-section-a-results.php">View Section A Results</a></li>
+            <li><a title="Go to the Edit Section A Questions page." href="edit-section-a-questions.php">Edit Section A Questions</a></li>
+            <li><a title="Go to the Edit Section A Tests page." href="edit-section-a-tests.php">Edit Section A Tests</a></li>
 
-          <li><strong>Other</strong></li>
-          <li><a title="Go to the Edit Users page." href="edit-users.php">Edit Users</a></li>
-        </ul>
-      </li>
-      <?php endif; ?>
+            <li><strong>Other</strong></li>
+            <li><a title="Go to the Edit Users page." href="edit-users.php">Edit Users</a></li>
+          </ul>
+        </li>
+        <?php endif; ?>
 
-      <!-- Grader -->
-      <?php if (isset($_SESSION['is_grader']) && $_SESSION['is_grader'] == "true"): ?>
-      <li>
-        <a href="#">Grading</a>
-        <ul class="menu vertical">
-          <li><a title="" href="#">One</a></li>
-        </ul>
-      </li>
-      <?php endif; ?>
+        <!-- Grader -->
+        <?php if (isset($_SESSION['is_grader']) && $_SESSION['is_grader'] == "true"): ?>
+        <li>
+          <a href="#">Grading</a>
+          <ul class="menu vertical">
+            <li><a title="" href="#">One</a></li>
+          </ul>
+        </li>
+        <?php endif; ?>
 
-      <!-- Competitor -->
-      <?php if (isset($_SESSION['is_competitor']) && $_SESSION['is_competitor'] == "true"): ?>
-      <li><a href="section-a.php">Test</a></li>
-      <?php endif; ?>
-    </ul>
-  </div>
+        <!-- Competitor -->
+        <?php if (isset($_SESSION['is_competitor']) && $_SESSION['is_competitor'] == "true"): ?>
+        <li><a href="section-a.php">Test</a></li>
+        <?php endif; ?>
+      </ul>
+    </div>
 
-  <div class="top-bar-right">
-    <ul class="menu">
-      <?php if (isset($_SESSION['is_competitor']) && $_SESSION['is_competitor'] == "true"): ?><!-- If the user is currently logged in -->
-      <li><a class="button alert" title="Go to the Log Out page." href="#" data-open="log-out-modal">Log Out</a></li>
-    <?php elseif (isset($_SESSION['id'])): ?>
-      <li><a class="button alert" title="Go to the Log Out page." href="_resources/php/log-out.php">Log Out</a></li>
-      <?php endif; ?>
-    </ul>
+    <div class="top-bar-right">
+      <ul class="menu">
+        <?php if (isset($_SESSION['is_competitor']) && $_SESSION['is_competitor'] == "true"): ?><!-- If the user is currently logged in -->
+        <li><a class="button alert" title="Go to the Log Out page." href="#" data-open="log-out-modal">Log Out</a></li>
+      <?php elseif (isset($_SESSION['id'])): ?>
+        <li><a class="button alert" title="Go to the Log Out page." href="_resources/php/log-out.php">Log Out</a></li>
+        <?php endif; ?>
+      </ul>
+    </div>
   </div>
 </div>
 

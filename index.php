@@ -89,14 +89,14 @@ if (isset($_SESSION['id'])) {
 
             <form action="index.php" method="post">
               <label>Username
-                <input type="text" name="username" placeholder="Username" v-model="username" required />
+                <input type="text" name="username" placeholder="Username" required />
               </label>
 
               <label>Password
-                <input type="password" name="password" placeholder="Password" v-model="password" required />
+                <input type="password" name="password" placeholder="Password" required />
               </label>
 
-              <p><button class="button expanded" v-on:click="logIn">Log In</button></p>
+              <p><button class="button expanded">Log In</button></p>
             </form>
 
             <?php if (isset($_POST['username'])): ?>
@@ -136,31 +136,15 @@ if (isset($_SESSION['id'])) {
 
       data: {
         // Headings
-        headingTwo: "Log In",
-        users: [],
-
-        username: "",
-        password: "",
+        headingTwo: "Log In"
       },
 
       methods: {
-        logIn: function() {
-          var valid = false;
 
-          for (var i = 0; i < this.users.length; i++) {
-            if (this.users[i].username == this.username && this.users[i].password == this.password) {
-              valid = true;
-            }
-          }
-
-          console.log(valid);
-        }
       },
 
       mounted: function() {
         console.log("App mounted.");
-
-        fetchData('_resources/txt/users.txt', this.users);
       },
 
       watch: {
