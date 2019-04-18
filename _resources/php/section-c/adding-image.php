@@ -13,13 +13,19 @@ $path = $path.strtolower($image_name);
 
 if (move_uploaded_file($image_tmp_name, $path)) {
   $path = str_replace("../../", "_resources/", $path);
+
   $description = $_POST['new-description'];
+  $description = str_replace("'", "\'", $description);
 
   $sql = "INSERT INTO section_c_images (section_c_images.path, description)
   VALUES ('$path', '$description')";
 
   if ($mysqli->query($sql)) {
-    header("Location: ../../../edit-section-c-images.php");
+
+  } else {
+    
   }
 }
+
+header("Location: ../../../edit-section-c-images.php");
 ?>
