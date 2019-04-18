@@ -6,7 +6,7 @@ $image_name = basename($_FILES['new-image']['name']); // Stores the original fil
 $image_tmp_name = $_FILES['new-image']['tmp_name']; // Stores the name of the designated temporary file.
 // $image_error = $_FILES['new-image']['error']; // Stores any error code resulting from the transfer.
 
-$path = '../../images/';
+$path = '../../stored/';
 
 $ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
 $path = $path.strtolower($image_name);
