@@ -52,7 +52,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
               <input type="text" name="new-description" />
 
               <!-- Save Button -->
-              <button class="tiny button success" title="Save this image." v-on:click="saveImage()"><i class="far fa-save fa-lg"></i></button>
+              <button class="tiny button success" title="Save this image."><i class="far fa-save fa-lg"></i></button>
             </form>
 
             <!-- Close Button -->
