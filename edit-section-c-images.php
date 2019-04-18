@@ -73,8 +73,12 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           <!-- Create Button -->
           <button class="button" title="Create a question image." data-open="create-modal"><i class="fas fa-plus fa-lg"></i></button>
 
-          <div class="cell" v-for="fetchedImage in fetchedImages">
-            <img :src="fetchedImage.path" :alt="fetchedImage.description" />
+          <div class="grid-x grid-padding-x" data-equalizer>
+            <div class="cell small-12 medium-6 large-3" v-for="fetchedImage in fetchedImages" data-equalizer-watch>
+              <div class="card">
+                <img :src="fetchedImage.path" :alt="fetchedImage.description" />
+              </div>
+            </div>
           </div>
 
           <!-- Create Button -->
