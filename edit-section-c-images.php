@@ -10,7 +10,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
 <html>
   <head>
-    <title>Edit Section C Question Images | iCompute</title>
+    <title>Edit Section C Images | iCompute</title>
 
     <!-- Styles -->
 
@@ -40,6 +40,8 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
     <div class="grid-container">
       <div class="grid-x grid-padding-x">
         <div id="app" class="cell">
+          <pre>{{ fetchedImages }}</pre>
+
           <!-- Create Modal -->
           <div class="reveal" id="create-modal" data-reveal>
             <h3>Add a New Image</h3>
@@ -52,7 +54,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
               <input type="text" name="new-description" />
 
               <!-- Save Button -->
-              <button class="tiny button success" title="Save this image."><i class="far fa-save fa-lg"></i></button>
+              <button class="button success" title="Save this image."><i class="far fa-save fa-lg"></i></button>
             </form>
 
             <!-- Close Button -->
@@ -64,7 +66,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
           <img src="/_resources/images/analysis-banner.jpg" alt="Edit Section C Question Images Banner" />
 
-          <h3>Edit Section C Question Images</h3>
+          <h3>Edit Section C Images</h3>
 
           <hr />
 
@@ -72,7 +74,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           <button class="button" title="Create a question image." data-open="create-modal"><i class="fas fa-plus fa-lg"></i></button>
 
           <div class="cell" v-for="fetchedImage in fetchedImages">
-            <img :src="fetchedImage.image" alt="fetchedImage.description" />
+            <img :src="fetchedImage.path" alt="fetchedImage.description" />
           </div>
 
           <!-- Create Button -->
