@@ -141,26 +141,42 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           <div class="large reveal" id="edit-modal" data-reveal>
             <h3>Edit Question</h3>
 
+            <h4>Question</h4>
             <label for="edited-question-question">Question
               <textarea name="question" rows="10" v-model="fetchedQuestions[editedQuestionIndex].question" v-if="fetchedQuestions[editedQuestionIndex]"></textarea>
             </label>
 
+            <hr />
+
+            <h4>Teams</h4>
+
+            <div class="grid-x" v-if="fetchedQuestions[editedQuestionIndex]">
+              <div class="cell small-12 medium-3 large-3" v-for="fetchedQuestionTeam in fetchedQuestionTeams" v-if="fetchedQuestions[editedQuestionIndex].id == fetchedQuestionTeam.questionId">
+                <div class="callout primary">
+                  <p>{{ getUserById(fetchedQuestionTeam.userId).name }}</p>
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
             <h4>Images</h4>
 
-            <!-- Add Image Button -->
-            <button class="tiny button" title="Add an image to this question." v-on:click="changeWantToAddImage()" v-if="!wantToAddImage"><i class="fas fa-plus fa-lg"></i></button>
+            <p><strong>Note</strong>: These images exist by being added on the <a title="Go to the Edit Section C Images page." href="edit-section-c-images.php" target="_blank">Edit Section C Images page</a>.</p>
 
-            <div v-if="wantToAddImage">
-              <form id="form" action="_resources/php/section-c/adding-question-image.php" method="post" enctype="multipart/form-data">
-                <label for="image">Image Uploader</label>
-                <input type="file" name="image" v-model="newQuestionImage" />
+            <div class="grid-x" v-if="fetchedQuestions[editedQuestionIndex]">
+              <div class="cell small-12 medium-2 large-2" v-for="currentQuestionContent in fetchedQuestionContent" v-if="fetchedQuestions[editedQuestionIndex].id == currentQuestionContent.questionId">
+                <div class="card card-product-hover">
+                  <div class="card-product-hover-icons">
+                    <!-- Delete Button -->
+                    <a title="Delete this image." href="#" v-on:click="deleteQuestionContent(currentQuestionContent)"><i class="fas fa-trash-alt"></i></a>
+                  </div>
 
-                <label for="description">Description</label>
-                <input type="text" name="description" />
-
-                <!-- Save Button -->
-                <button class="tiny button success" title="Save this image." v-on:click="saveQuestionImage()"><i class="far fa-save fa-lg"></i></button>
-              </form>
+                  <div class="card-product-hover-details">
+                    <img :src="getImageById(currentQuestionContent.imageId).path" :alt="getImageById(currentQuestionContent.imageId).description" />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -229,12 +245,9 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
                     <h4>Images</h4>
 
-                    <div v-if="fetchedQuestionImages.length != 0">
-
-                    </div>
-                    <div v-else>
-                      <div class="callout warning">
-                        <p>There are no images for this question.</p>
+                    <div class="grid-x">
+                      <div class="cell small-12 medium-2 large-2" v-for="currentQuestionContent in fetchedQuestionContent" v-if="fetchedQuestion.id == currentQuestionContent.questionId">
+                        <img class="thumbnail" :src="getImageById(currentQuestionContent.imageId).path" :alt="getImageById(currentQuestionContent.imageId).description" />
                       </div>
                     </div>
                   </div>
@@ -277,7 +290,10 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
       data: {
         fetchedQuestions: [],
-        fetchedQuestionImages: [],
+        fetchedQuestionContent: [],
+        fetchedImages: [],
+        fetchedQuestionTeams: [],
+        fetchedUsers: [],
 
         editedQuestionIndex: -1,
 
@@ -306,13 +322,45 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           };
           this.fetchedQuestions = [];
           fetchData("section_c_questions", this.fetchedQuestions);
-          fetchData("section_c_question_images", this.fetchedQuestionImages);
+          fetchData("section_c_question_content", this.fetchedQuestionContent);
 
           $("div#create-modal").foundation("close"); // Close the create modal.
         },
 
-        changeWantToAddImage() {
+        changeWantToAddImage: function() {
           this.wantToAddImage = !this.wantToAddImage;
+        },
+
+        deleteQuestionContent: function(questionContent) {
+          postData("_resources/php/section-c/deleting-question-content.php", questionContent, "deleting");
+
+          // Reset.
+          this.fetchedQuestionContent = [];
+          fetchData("section_c_question_content", this.fetchedQuestionContent);
+        },
+
+        getImageById: function(id) {
+          var fetchedImage = {};
+
+          for (var i = 0; i < this.fetchedImages.length; i++) {
+            if (this.fetchedImages[i].id == id) {
+              fetchedImage = this.fetchedImages[i];
+            }
+          }
+
+          return fetchedImage;
+        },
+
+        getUserById: function(id) {
+          var fetchedUser = {};
+
+          for (var i = 0; i < this.fetchedUsers.length; i++) {
+            if (this.fetchedUsers[i].id == id) {
+              fetchedUser = this.fetchedUsers[i];
+            }
+          }
+
+          return fetchedUser;
         },
 
         makeHtmlFriendly: function(string) {
@@ -356,11 +404,11 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           // Get the next order number for this test.
           var order = -1;
 
-          console.log(this.fetchedQuestionImages);
+          console.log(this.fetchedQuestionContent);
 
-          for (var i = 0; i < this.fetchedQuestionImages.length; i++) {
-            if (this.fetchedQuestionImages[i].questionId == this.fetchedQuestions[this.editedQuestionIndex].id && this.fetchedQuestionImages[i].order > order) {
-              order = this.fetchedQuestionImages[i].order;
+          for (var i = 0; i < this.fetchedQuestionContent.length; i++) {
+            if (this.fetchedQuestionContent[i].questionId == this.fetchedQuestions[this.editedQuestionIndex].id && this.fetchedQuestionContent[i].order > order) {
+              order = this.fetchedQuestionContent[i].order;
             }
           }
 
@@ -389,7 +437,10 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         console.log("App mounted.");
 
         fetchData("section_c_questions", this.fetchedQuestions);
-        fetchData("section_c_question_images", this.fetchedQuestionImages);
+        fetchData("section_c_images", this.fetchedImages);
+        fetchData("section_c_question_content", this.fetchedQuestionContent);
+        fetchData("section_c_question_teams", this.fetchedQuestionTeams);
+        fetchData("users", this.fetchedUsers);
 
         let self = this; // "this" is not within the scope of setTimeout().
         setTimeout(function() {

@@ -170,7 +170,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           <div class="reveal" id="delete-modal" data-reveal>
             <h3>Confirmation</h3>
 
-            <p>Type <strong>delete</strong> to delete the question.</p>
+            <p>Type <strong>delete</strong> to delete the image.</p>
             <input type="text" name="delete-confirmation" v-model="deleteConfirmation" />
 
             <!-- Close Button -->
@@ -194,7 +194,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
             <button class="button" title="Create a question image." data-open="create-modal"><i class="fas fa-plus fa-lg"></i></button>
 
             <div class="grid-x grid-padding-x" data-equalizer>
-              <div class="cell small-12 medium-6 large-3" v-for="(fetchedImage, index) in fetchedImages">
+              <div class="cell small-12 medium-3 large-3" v-for="(fetchedImage, index) in fetchedImages">
                 <div class="card card-product-hover" data-equalizer-watch>
                   <img style="min-height: 268px;" :src="fetchedImage.path" :alt="fetchedImage.description" />
 
@@ -206,7 +206,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                     <a title="Delete this image." href="#" data-open="delete-modal" v-on:click="setDeletedImageIndex(index)"><i class="fas fa-trash-alt"></i></a>
                   </div>
 
-                  <div class="card-product-hover-details">
+                  <div style="min-height: 108.8px;" class="card-product-hover-details">
                     <p>{{ fetchedImage.description }}</p>
                   </div>
                 </div>

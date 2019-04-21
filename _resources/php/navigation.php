@@ -15,10 +15,14 @@
         <li>
           <a title="Go to the Supervisor page." href="supervisor.php">Admin</a>
           <ul class="menu vertical">
-            <li><strong>Section A</strong>
+            <li><strong>Section A</strong></li>
             <li><a title="Go to the View Section A Results page." href="view-section-a-results.php">View Results</a></li>
             <li><a title="Go to the Edit Section A Questions page." href="edit-section-a-questions.php">Edit Questions</a></li>
             <li><a title="Go to the Edit Section A Tests page." href="edit-section-a-tests.php">Edit Tests</a></li>
+
+            <li><strong>Section C</strong></li>
+            <li><a title="Go to the Edit Section C Questions page." href="edit-section-c-questions.php">Edit Questions</a></li>
+            <li><a title="Go to the Edit Section C Images page." href="edit-section-c-images.php">Edit Images</a></li>
 
             <li><strong>Other</strong></li>
             <li><a title="Go to the Edit Users page." href="edit-users.php">Edit Users</a></li>
