@@ -202,10 +202,6 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
       },
 
       methods: {
-        checkIfTaken: function() {
-
-        },
-
         obtainTeamQuestions: function() {
           this.testStarted = true;
 

@@ -39,8 +39,6 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         position: relative;
         line-height: 1.2rem;
         transition: all 0.35s ease;
-
-        min-height: 125px;
       }
       .card-product-hover-details {
         -webkit-flex: 1 0 auto;
@@ -123,7 +121,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
     <div class="grid-container">
       <div class="grid-x grid-padding-x">
         <div id="app" class="cell">
-          <!-- Create Modal -->
+          <!-- Create Question Modal -->
           <div class="reveal" id="create-modal" data-reveal>
             <h3>Create a Question</h3>
 
@@ -135,6 +133,38 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
             <!-- Close Button -->
             <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the create modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
+          </div>
+
+          <!-- Add Team Modal -->
+          <div class="reveal" id="add-team-modal" data-reveal>
+            <h3>Add a Team</h3>
+            <p>Pick a team you want to add.</p>
+
+            <select v-model="addedQuestionTeamId">
+              <option v-for="availableQuestionTeam in availableQuestionTeams" :value="availableQuestionTeam.id">{{ availableQuestionTeam.name }}</option>
+            </select>
+
+            <!-- Create Button -->
+            <button class="button" v-on:click="addQuestionTeam"><i class="fas fa-plus fa-lg"></i></button>
+
+            <!-- Close Button -->
+            <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the adding modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
+          </div>
+
+          <!-- Add Image Modal -->
+          <div class="reveal" id="add-content-modal" data-reveal>
+            <h3>Add an Image</h3>
+            <p>Pick an image you want to add.</p>
+
+            <select v-model="addedQuestionContentId">
+              <option v-for="fetchedImage in fetchedImages" :value="fetchedImage.id">{{ fetchedImage.path.substring(fetchedImage.path.lastIndexOf('/') + 1) }}</option>
+            </select>
+
+            <!-- Create Button -->
+            <button class="button" v-on:click="addQuestionContent"><i class="fas fa-plus fa-lg"></i></button>
+
+            <!-- Close Button -->
+            <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the adding modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
           </div>
 
           <!-- Edit Modal -->
@@ -150,10 +180,17 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
             <h4>Teams</h4>
 
+            <button class="tiny button" data-open="add-team-modal" v-on:click="updateAvailableQuestionTeams"><i class="fas fa-plus fa-lg"></i></button>
+
             <div class="grid-x" v-if="fetchedQuestions[editedQuestionIndex]">
               <div class="cell small-12 medium-3 large-3" v-for="fetchedQuestionTeam in fetchedQuestionTeams" v-if="fetchedQuestions[editedQuestionIndex].id == fetchedQuestionTeam.questionId">
-                <div class="callout primary">
-                  <p>{{ getUserById(fetchedQuestionTeam.userId).name }}</p>
+                <div class="card card-product-hover">
+                  <div class="card-product-hover-icons">
+                    <!-- Delete Button -->
+                    <a title="Delete this team." href="#" data-open="delete-modal" v-on:click="setDelete(fetchedQuestionTeam, 'team')"><i class="fas fa-trash-alt"></i></a>
+                  </div>
+
+                  <div class="card-product-hover-details">{{ getUserById(fetchedQuestionTeam.userId).name }}</div>
                 </div>
               </div>
             </div>
@@ -162,6 +199,8 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
             <h4>Images</h4>
 
+            <button class="tiny button" data-open="add-content-modal"><i class="fas fa-plus fa-lg"></i></button>
+
             <p><strong>Note</strong>: These images exist by being added on the <a title="Go to the Edit Section C Images page." href="edit-section-c-images.php" target="_blank">Edit Section C Images page</a>.</p>
 
             <div class="grid-x" v-if="fetchedQuestions[editedQuestionIndex]">
@@ -169,7 +208,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                 <div class="card card-product-hover">
                   <div class="card-product-hover-icons">
                     <!-- Delete Button -->
-                    <a title="Delete this image." href="#" v-on:click="deleteQuestionContent(currentQuestionContent)"><i class="fas fa-trash-alt"></i></a>
+                    <a title="Delete this image." href="#" data-open="delete-modal" v-on:click="setDelete(currentQuestionContent, 'image')"><i class="fas fa-trash-alt"></i></a>
                   </div>
 
                   <div class="card-product-hover-details">
@@ -184,7 +223,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
               <button class="button success" title="Save this question." data-open="save-modal" v-on:click="saveQuestion()"><i class="far fa-save fa-lg"></i></button>
 
               <!-- Delete Button -->
-              <button class="button alert" title="Delete this question." v-on:click="setDeletedQuestionIndex(index)"><i class="fas fa-trash-alt fa-lg"></i></button>
+              <button class="button alert" title="Delete this question." data-open="delete-modal" v-on:click="setDelete(fetchedQuestions[editedQuestionIndex], 'question')"><i class="fas fa-trash-alt fa-lg"></i></button>
             </div>
 
             <!-- Close Button -->
@@ -203,7 +242,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           <!-- Delete Modal -->
           <div class="reveal" id="delete-modal" data-reveal>
             <h3>Confirmation</h3>
-            <p>Type <strong>delete</strong> to delete the question.</p>
+            <p>Type <strong>delete</strong> to delete the {{ deleteItemType }}.</p>
             <input type="text" name="delete-confirmation" v-model="deleteConfirmation" />
 
             <!-- Close Button -->
@@ -237,17 +276,29 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                     <a title="Edit this question." href="#" data-open="edit-modal" v-on:click="setEditedQuestionIndex(index)"><i class="fas fa-edit"></i></a>
 
                     <!-- Delete Button -->
-                    <a title="Delete this question." href="#"><i class="fas fa-trash-alt"></i></a>
+                    <a title="Delete this question." href="#" data-open="delete-modal" v-on:click="setDelete(fetchedQuestion, 'question')"><i class="fas fa-trash-alt"></i></a>
                   </div>
 
                   <div class="card-product-hover-details">
                     <p style="white-space: pre-wrap;">{{ fetchedQuestion.question }}</p>
 
-                    <h4>Images</h4>
+                    <div class="grid-x grid-padding-x">
+                      <div class="cell small-12 medium-6 large-6">
+                        <h4>Images</h4>
 
-                    <div class="grid-x">
-                      <div class="cell small-12 medium-2 large-2" v-for="currentQuestionContent in fetchedQuestionContent" v-if="fetchedQuestion.id == currentQuestionContent.questionId">
-                        <img class="thumbnail" :src="getImageById(currentQuestionContent.imageId).path" :alt="getImageById(currentQuestionContent.imageId).description" />
+                        <div class="grid-x grid-padding-x">
+                          <div class="cell small-12 medium-2 large-2" v-for="currentQuestionContent in fetchedQuestionContent" v-if="fetchedQuestion.id == currentQuestionContent.questionId">
+                            <img class="thumbnail" :src="getImageById(currentQuestionContent.imageId).path" :alt="getImageById(currentQuestionContent.imageId).description" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="cell small-12 medium-6 large-6">
+                        <h4>Teams</h4>
+
+                        <ul>
+                          <li v-for="fetchedQuestionTeam in fetchedQuestionTeams" v-if="fetchedQuestion.id == fetchedQuestionTeam.questionId">{{ getUserById(fetchedQuestionTeam.userId).name }}</li>
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -295,6 +346,8 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
         fetchedQuestionTeams: [],
         fetchedUsers: [],
 
+        availableQuestionTeams: [],
+
         editedQuestionIndex: -1,
 
         deleteConfirmation: "",
@@ -309,7 +362,14 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
         saveStatus: "",
 
-        wantToAddImage: false
+        wantToAddImage: false,
+
+
+        deleteItem: {},
+        deleteItemType: "",
+
+        addedQuestionTeamId: -1,
+        addedQuestionContentId: -1
       },
 
       methods: {
@@ -327,16 +387,91 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           $("div#create-modal").foundation("close"); // Close the create modal.
         },
 
-        changeWantToAddImage: function() {
-          this.wantToAddImage = !this.wantToAddImage;
+        addQuestionTeam: function() {
+          postData("_resources/php/section-c/adding-question-team.php", {
+            questionId: this.fetchedQuestions[this.editedQuestionIndex].id,
+            userId: this.addedQuestionTeamId
+          }, "adding");
+
+          // Reset.
+          this.fetchedQuestionTeams = [];
+          fetchData("section_c_question_teams", this.fetchedQuestionTeams);
+
+          $("div#add-team-modal").foundation("close"); // Close the adding modal.
+          $("div#edit-modal").foundation("open"); // Open the previous modal, the edit modal.
         },
 
-        deleteQuestionContent: function(questionContent) {
-          postData("_resources/php/section-c/deleting-question-content.php", questionContent, "deleting");
+        addQuestionContent: function() {
+          var order = -1;
+
+          for (var i = 0; i < this.fetchedQuestionContent.length; i++) {
+            if (this.fetchedQuestionContent[i].questionId = this.fetchedQuestions[this.editedQuestionIndex].id && this.fetchedQuestionContent[i].order > order) {
+              order = this.fetchedQuestionContent[i].order;
+            }
+          }
+
+          ++order;
+
+          postData("_resources/php/section-c/adding-question-content.php", {
+            questionId: this.fetchedQuestions[this.editedQuestionIndex].id,
+            imageId: this.addedQuestionContentId,
+            order: order
+          }, "adding");
 
           // Reset.
           this.fetchedQuestionContent = [];
           fetchData("section_c_question_content", this.fetchedQuestionContent);
+
+          $("div#add-content-modal").foundation("close"); // Close the adding modal.
+          $("div#edit-modal").foundation("open"); // Open the previous modal, the edit modal.
+        },
+
+        deleteQuestion: function(question) {
+          // Delete the images and the teams associated with this test.
+          for (var i = 0; i < this.fetchedQuestionContent.length; i++) {
+            if (this.fetchedQuestionContent[i].questionId == question.id) {
+              this.deleteQuestionContent(this.fetchedQuestionContent[i], false);
+            }
+          }
+
+          this.fetchedQuestionContent = [];
+          fetchData("section_c_question_content", this.fetchedQuestionContent);
+
+          for (var i = 0; i < this.fetchedQuestionTeams.length; i++) {
+            if (this.fetchedQuestionTeams[i].questionId == question.id) {
+              this.deleteQuestionTeam(this.fetchedQuestionTeams[i], false);
+            }
+          }
+
+          this.fetchedQuestionTeams = [];
+          fetchData("section_c_question_teams", this.fetchedQuestionTeams);
+
+          // Delete the entire test, finally.
+          postData("_resources/php/section-c/deleting-question.php", question, "deleting");
+
+          // Reset.
+          this.fetchedQuestions = [];
+          fetchData("section_c_questions", this.fetchedQuestions);
+        },
+
+        deleteQuestionContent: function(questionContent, doReset) {
+          postData("_resources/php/section-c/deleting-question-content.php", questionContent, "deleting");
+
+          // Reset if acceptable.
+          if (doReset) {
+            this.fetchedQuestionContent = [];
+            fetchData("section_c_question_content", this.fetchedQuestionContent);
+          }
+        },
+
+        deleteQuestionTeam: function(questionTeam, doReset) {
+          postData("_resources/php/section-c/deleting-question-team.php", questionTeam, "deleting");
+
+          // Reset if acceptable.
+          if (doReset) {
+            this.fetchedQuestionTeams = [];
+            fetchData("section_c_question_teams", this.fetchedQuestionTeams);
+          }
         },
 
         getImageById: function(id) {
@@ -361,10 +496,6 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
           }
 
           return fetchedUser;
-        },
-
-        makeHtmlFriendly: function(string) {
-          return string.replace(/\\r\\n/g, "<br />");
         },
 
         saveQuestion: function() {
@@ -400,36 +531,35 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
 
         },
 
-        saveQuestionImage: function() {
-          // Get the next order number for this test.
-          var order = -1;
-
-          console.log(this.fetchedQuestionContent);
-
-          for (var i = 0; i < this.fetchedQuestionContent.length; i++) {
-            if (this.fetchedQuestionContent[i].questionId == this.fetchedQuestions[this.editedQuestionIndex].id && this.fetchedQuestionContent[i].order > order) {
-              order = this.fetchedQuestionContent[i].order;
-            }
-          }
-
-          ++order;
-
-          console.log(order);
-
-          var data = new FormData($("#form"));
-
-          postData("_resources/php/section-c/adding-question-image.php", data, "adding");
-
-          // Reset.
-          this.newQuestionImage = "";
-        },
-
-        setDeletedQuestionIndex: function(index) {
-
+        setDelete: function(item, type) {
+          this.deleteItem = item;
+          this.deleteItemType = type;
         },
 
         setEditedQuestionIndex: function(index) {
           this.editedQuestionIndex = index;
+        },
+
+        updateAvailableQuestionTeams: function() {
+          var newTeams = [];
+
+          for (var i  = 0; i < this.fetchedUsers.length; i++) {
+            if (this.fetchedUsers[i].isCompetitor == "true") {
+              var isAvailable = true;
+
+              for (var j = 0; j < this.fetchedQuestionTeams.length; j++) {
+                if (this.fetchedQuestionTeams[j].userId == this.fetchedUsers[i].id) {
+                  isAvailable = false;
+                }
+              }
+
+              if (isAvailable) {
+                newTeams.push(this.fetchedUsers[i]);
+              }
+            }
+          }
+
+          this.availableQuestionTeams = newTeams;
         }
       },
 
@@ -449,7 +579,34 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
       },
 
       watch: {
+        deleteConfirmation: function() {
+          if (this.deleteConfirmation == "delete") {
+            switch (this.deleteItemType) {
+              case "image":
+                this.deleteQuestionContent(this.deleteItem, true);
+                break;
 
+              case "team":
+                this.deleteQuestionTeam(this.deleteItem);
+                break;
+
+              case "question":
+                this.deleteQuestion(this.deleteItem);
+                break;
+            }
+
+            this.deleteConfirmation = "";
+            $("div#delete-modal").foundation("close"); // Close the delete modal.
+
+            if (this.deleteItemType == "questionContent" || this.deleteItemType == "questionTeam") {
+              $("div#edit-modal").foundation("open"); // Open the previous modal, the edit modal.
+            }
+          }
+        },
+
+        fetchedQuestionTeams: function() {
+          this.updateAvailableQuestionTeams();
+        }
       }
     });
     </script>
