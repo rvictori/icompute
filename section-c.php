@@ -55,6 +55,12 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
                 <p>You have taken this part of the test already and may not take it again. Thank you for competing in this year's iCompute competition. You may now <strong>log out</strong> your account.</p>
               </div>
             </div>
+            <div v-if="jQuery.isEmptyObject(question)">
+              <div class="callout alert">
+                <h4>Contact Supervisor</h4>
+                <p>It appears there is no assigned test for your team. <strong>Please contact the supervisor to resolve this problem.</strong>
+              </div>
+            </div>
             <div v-else>
               <button class="button large expanded" v-on:click="startTest">Start Exam</button>
             </div>

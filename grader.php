@@ -48,8 +48,16 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_grader'] == "false")) { // Redirec
 
           <hr />
 
-          <div class="callout primary">
-            <p>The pages for graders will be available soon.</p>
+          <h3>Section C</h3>
+
+          <div class="grid-x grid-padding-x">
+            <div class="cell small-12 medium-12 large-2">
+              <p><a class="button alert expanded" title="Go to the Grade Section C page." href="grade-section-c.php"><i class="fas fa-calculator fa-5x"></i></a></p>
+            </div>
+            <div class="cell small-12 medium-12 large-10">
+              <h4><a title="Go to the Grade Section C page." href="grade-section-c.php">Grading Tests</a></h4>
+              <p>View all submissions for Section C and grade each one based on their submitted Scratch file that can be downloaded.</p>
+            </div>
           </div>
         </div>
       </div>

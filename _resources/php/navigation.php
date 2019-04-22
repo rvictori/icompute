@@ -32,7 +32,13 @@
 
         <!-- Grader -->
         <?php if (isset($_SESSION['is_grader']) && $_SESSION['is_grader'] == "true"): ?>
-        <li><a href="grader.php">Grading</a></li>
+        <li>
+          <a title="Go to the Grader page." href="grader.php">Grader</a>
+          <ul class="menu vertical">
+            <li><strong>Section C</strong></li>
+            <li><a title="Go to the Grade Section C page." href="grade-section-c.php">Grade Tests</a></li>
+          </ul>
+        </li>
         <?php endif; ?>
 
         <!-- Competitor -->

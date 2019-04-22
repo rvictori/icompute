@@ -76,6 +76,26 @@ if (!(isset($_SESSION['id']) || $_SESSION['is_supervisor'] == "false")) { // Red
             </div>
           </div>
 
+          <h3>Section C</h3>
+
+          <div class="grid-x grid-padding-x">
+            <div class="cell small-12 medium-12 large-2">
+              <p><a class="button success expanded" title="Go to the Edit Section C Questions page." href="edit-section-c-questions.php"><i class="fas fa-question fa-5x"></i></a></p>
+            </div>
+            <div class="cell small-12 medium-12 large-10">
+              <h4><a title="Go to the Edit Section C Questions page." href="edit-section-c-questions.php">Edit Questions</a></h4>
+              <p>Visit the maker page where you can create new Scratch questions and edit existing ones by changing the requirements and adding images that help the competitors out. This is the place where you can also determine which team can answer which Section C question.</p>
+            </div>
+
+            <div class="cell small-12 medium-12 large-2">
+              <p><a class="button success expanded" title="Go to the Edit Section C Images page." href="edit-section-c-images.php"><i class="fas fa-images fa-5x"></i></a></p>
+            </div>
+            <div class="cell small-12 medium-12 large-10">
+              <h4><a title="Go to the Edit Section C Images page." href="edit-section-c-images.php">Edit Images</a></h4>
+              <p>Add and delete images that will be associated for a Scratch question. You may also edit the description of each image as it is necessary just in case the browser cannot read the specified image.</p>
+            </div>
+          </div>
+
           <h3>Users</h3>
 
           <div class="grid-x grid-padding-x">

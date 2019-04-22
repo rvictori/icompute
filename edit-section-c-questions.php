@@ -587,7 +587,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_supervisor'] == "true")) { // Redi
                 break;
 
               case "team":
-                this.deleteQuestionTeam(this.deleteItem);
+                this.deleteQuestionTeam(this.deleteItem, true);
                 break;
 
               case "question":

@@ -56,7 +56,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
             <p>Click the submit button to go on to the next section.</p>
 
             <!-- Submit Button -->
-            <button class="button success" v-on:click="addingResult">Submit</button>
+            <a class="button success" title="Submit your answers and go to Section C page." href="section-c.php" v-on:click="addingResult">Submit</a>
 
             <!-- Close Button -->
             <button class="close-button" data-close aria-label="Close modal." type="button" title="Close the submit modal."><span aria-hidden="true"><i class="far fa-times-circle"></i></span></button>
@@ -81,7 +81,7 @@ if (!(isset($_SESSION['id']) && $_SESSION['is_competitor'] == "true")) { // Redi
                 <p>You have taken this part of the test already and may not take it again. Please move on to the next part of the exam.</p>
               </div>
 
-              <a class="button expanded" title="Go to the Section B page." href="#">Section B</a>
+              <a class="button expanded" title="Go to the Section C page." href="section-c.php">Section C</a>
             </div>
             <div v-else>
               <img src="_resources/images/book-with-laptop-banner.jpg" alt="Book with laptop banner" v-if="!testStarted" />
